@@ -11,6 +11,15 @@ public class ScoreManager : MonoBehaviour
     public int leftScore;
     public int rightScore;
 
+    private void Start()
+    {
+        leftScore = 0;
+        rightScore = 0;
+        
+        leftScoreText.text = leftScore.ToString();
+        rightScoreText.text = rightScore.ToString();
+    }
+
     public void IncrementLeftPlayerScore()
     {
         leftScore++;

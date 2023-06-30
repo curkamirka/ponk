@@ -58,12 +58,10 @@ public class BallController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (transform.position.x > 0)
-        {
             scoreManager.IncrementLeftPlayerScore();
-        }else if (transform.position.x < 0)
-        {
+        
+        if (transform.position.x < 0)
             scoreManager.IncrementRightPlayerScore();
-        }
 
         rigbody2D.velocity = Vector2.zero;
         transform.position = Vector2.zero;
