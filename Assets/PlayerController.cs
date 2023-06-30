@@ -4,29 +4,26 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 1f;
-    public KeyCode upKey = KeyCode.W;
-    public KeyCode downKey = KeyCode.S;
-
-
+    public float Speed = 1f;
+    public KeyCode KeyUp = KeyCode.W;
+    public KeyCode KeyDown = KeyCode.S;
+    
+    
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Start");  
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-       
-        if (Input.GetKey(upKey) && transform.position.y < 5)
+        if (Input.GetKey(KeyUp)&&transform.position.y < 4f)
         {
-           transform.position += Vector3.up * Time.deltaTime * speed;
-        }
-
-        if (Input.GetKey(downKey) && transform.position.y > -5)
+            transform.position += Vector3.up * Time.deltaTime * Speed;
+        }else if (Input.GetKey(KeyDown)&&transform.position.y > -4f)
         {
-            transform.position -= Vector3.up * Time.deltaTime * speed;
+            transform.position += Vector3.down * Time.deltaTime * Speed;
         }
     }
 }

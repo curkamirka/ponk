@@ -1,59 +1,72 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BallController : MonoBehaviour
-{ 
-       public Rigidbody2D rb2D;
-    public float speed = 1f;
-    public Vector2 vel;
-    public bool gameStarted;
-    // Start is called before the first frame update
+{
+    public Rigidbody2D rigbody2D;
+    private bool gameStarted;
+
+    private float ballSpeed = 7.3f;
+    private float newSpeed = 1.003f;
+
+    private Vector2 velocity;
+
+    public ScoreManager scoreManager;
+    
     void Start()
     {
-        rb2D = GetComponent<Rigidbody2D>();
-       
-    }
-    private void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Space) && gameStarted == false)
-            SendBallToRandomDirection();
-    }
-    private void SendBallToRandomDirection()
-    {
-        rb2D.velocity = GenerateRandomVector2Without0(true) * speed;
-        vel = rb2D.velocity;
+        rigbody2D = GetComponent<Rigidbody2D>();
+        BallStartVelocity();
     }
 
-    private Vector2 GenerateRandomVector2Without0(bool shouldReturnNormalized)
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Space)&& (gameStarted == false))
+        {
+            BallStartVelocity();
+        }
+    }
+
+    private Vector2 StartVector(bool isNormalized)
     {
         Vector2 newVelocity = new Vector2();
         bool shouldGoRight = Random.Range(1, 100) > 50;
-        newVelocity.x = shouldGoRight ? Random.Range(.7f, .3f) : Random.Range(-.7f, -.3f);
-        newVelocity.y = shouldGoRight ? Random.Range(.7f, .3f) : Random.Range(-.7f, -.3f);
-
-        return shouldReturnNormalized ? newVelocity.normalized : newVelocity;
-            
+        newVelocity.x = shouldGoRight ? Random.Range(.8f, .3f) : Random.Range(-.8f,-.3f);
+        newVelocity.y = shouldGoRight ? Random.Range(.8f, .3f) : Random.Range(-.8f,-.3f);
+        return isNormalized ? newVelocity.normalized : newVelocity;
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    
+    private void BallStartVelocity()
     {
-
-        rb2D.velocity = Vector2.Reflect(vel, collision.contacts[0].normal);
-        vel=rb2D.velocity;
-
+        rigbody2D.velocity = Vector2.zero;
+        transform.position = Vector2.zero;
+        rigbody2D.velocity = StartVector(true).normalized * ballSpeed;
+        velocity = rigbody2D.velocity;
+        gameStarted = true;
     }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {  
-        if (transform.position.x < 0)
-            print("Right player +1");
-        if (transform.position.x > 0)
-            print("Left player +1");
+    
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        rigbody2D.velocity = Vector2.Reflect(velocity, col.contacts[0].normal);
+        velocity = rigbody2D.velocity * newSpeed;
+    }
 
-        rb2D.velocity = Vector2.zero;
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (transform.position.x > 0)
+        {
+            scoreManager.IncrementLeftPlayerScore();
+        }else if (transform.position.x < 0)
+        {
+            scoreManager.IncrementRightPlayerScore();
+        }
+
+        rigbody2D.velocity = Vector2.zero;
         transform.position = Vector2.zero;
         gameStarted = false;
-       
-
-      
     }
 }
